@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerador de QR Code 1.0</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+</head>
+<body>
+
+  <header>
+    
+  </header>
+
+  <section id="qr-section">
+    <h1>Gerador de QR Code</h1>
+    <!-- Formulário com campo de entrada e botão -->
+    <form id="qr-form">
+      <label for="text-input">Conteúdo do QR Code:</label>
+      <input type="text" id="text-input" required>
+      <button type="submit">Criar</button>
+      </form>
+
+    <!-- Local para exibir o QR Code -->
+    <div id="qrcode-container">
+      <div id="qrcode"><h5 class="msg">Aguardando o conteúdo...</h5></div>
+    </div>
+    <footer><h6>9Designer</h6></footer>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
