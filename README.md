@@ -1,25 +1,26 @@
-# qrcode1
+# Gerador de QR Code Online Grátis
 
-Um gerador de QR Code **simples, rápido e totalmente gratuito** feito com HTML, CSS e JavaScript puro.
+Um gerador de QR Code **simples, rápido e totalmente gratuito** feito com HTML, CSS e JavaScript puro.  
+Digite qualquer texto, URL, mensagem, contato ou Wi-Fi e gere um QR Code instantaneamente — sem cadastro, sem complicações.
 
-## Como usar
+### ✨ Recursos
+- Interface limpa e moderna com tema escuro
+- Geração instantânea de QR Codes
+- Suporte a qualquer conteúdo (texto, links, e-mail, telefone, Wi-Fi, etc.)
+- Totalmente responsivo (funciona no celular e desktop)
+- Não coleta dados • 100% client-side
+- Hospedado gratuitamente no GitHub Pages
 
-Abra o arquivo principal diretamente no navegador
-
-```
-
-## Tecnologias utilizadas
-
-- HTML
-- CSS
-- JS
-
-## Preview
+### 🖼️ Preview
 
 ![Preview 1](preview-desktop.png)
 
-## Contribuição
+### 👤 Autor
+Feito com ❤️ por **José Almir**
 
-Sinta-se à vontade para abrir issues ou enviar pull requests!
+Se curtiu o projeto, deixe uma ⭐ no repositório!
 
-Boa codificação! 🚀
+---
+
+**Tecnologias usadas:**  
+HTML5 • CSS3 • JavaScript • [qrcode.js](https://davidshimjs.github.io/qrcodejs/)
