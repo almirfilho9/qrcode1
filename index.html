@@ -13,22 +13,74 @@
     
   </header>
 
-  <section id="qr-section">
+  <section id="qr-section" role="main">
     <h1>Gerador de QR Code 1.0</h1>
-    <!-- Formulário com campo de entrada e botão -->
-    <form id="qr-form">
-      <label for="text-input">Conteúdo do QR Code:</label>
-      <input type="text" id="text-input" required>
-      <button type="submit">Criar</button>
-      </form>
+    
+    <!-- Tab navigation -->
+    <nav id="tab-navigation" class="tab-nav" role="tablist" aria-label="Navegação principal">
+      <button class="tab-button active" data-tab="generator" role="tab" aria-selected="true" aria-controls="generator-tab">Gerador</button>
+      <button class="tab-button" data-tab="customize" role="tab" aria-selected="false" aria-controls="customize-tab">Personalizar</button>
+      <button class="tab-button" data-tab="history" role="tab" aria-selected="false" aria-controls="history-tab">Histórico</button>
+      <button class="tab-button" data-tab="types" role="tab" aria-selected="false" aria-controls="types-tab">Tipos</button>
+    </nav>
 
-    <!-- Local para exibir o QR Code -->
-    <div id="qrcode-container">
-      <div id="qrcode"><h5 class="msg">Aguardando o conteúdo...</h5></div>
+    <!-- Main content area -->
+    <div id="main-content">
+      <!-- Generator tab content -->
+      <div id="generator-tab" class="tab-content active">
+        <!-- Formulário com campo de entrada e botão -->
+        <form id="qr-form" role="form">
+          <label for="text-input">Conteúdo do QR Code:</label>
+          <input type="text" id="text-input" required aria-describedby="text-help">
+          <div id="text-help" class="sr-only">Digite o texto que será convertido em QR Code</div>
+          <button type="submit" aria-describedby="submit-help">Criar</button>
+          <div id="submit-help" class="sr-only">Clique para gerar o QR Code</div>
+        </form>
+
+        <!-- Local para exibir o QR Code -->
+        <div id="qrcode-container">
+          <div id="qrcode"><h5 class="msg">Aguardando o conteúdo...</h5></div>
+        </div>
+
+        <!-- Download buttons (placeholder for task 2) -->
+        <div id="download-section" class="download-section" style="display: none;">
+          <h3>Download</h3>
+          <div class="download-buttons">
+            <button id="download-png" class="download-btn">PNG</button>
+            <button id="download-svg" class="download-btn">SVG</button>
+            <button id="download-jpeg" class="download-btn">JPEG</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customization tab content -->
+      <div id="customize-tab" class="tab-content" style="display: none;">
+        <h3>Personalização</h3>
+        <div id="customization-panel">
+          <!-- Customization controls will be populated by CustomizationManager -->
+        </div>
+      </div>
+
+      <!-- History tab content -->
+      <div id="history-tab" class="tab-content" style="display: none;">
+        <h3>Histórico</h3>
+        <div id="history-panel">
+          <!-- History interface will be populated by HistoryManager -->
+        </div>
+      </div>
+
+      <!-- Content types tab -->
+      <div id="types-tab" class="tab-content" style="display: none;">
+        <h3>Tipos de Conteúdo</h3>
+        <div id="content-types-panel">
+          <!-- Content type selection will be populated by ContentParser -->
+        </div>
+      </div>
     </div>
+
     <footer><h6>9Designer</h6></footer>
   </section>
 
-  <script src="script.js"></script>
+  <script type="module" src="js/App.js"></script>
 </body>
 </html>
