@@ -232,8 +232,8 @@ class QRGenerator {
             throw new Error('No QR code to regenerate');
         }
 
-        const updatedOptions = { ...this.currentQRCode.options, ...newOptions };
-        await this.generate(this.currentQRCode.content, updatedOptions);
+        // Use as novas opções diretamente, sem mesclar com as antigas
+        await this.generate(this.currentQRCode.content, newOptions);
     }
 }
 

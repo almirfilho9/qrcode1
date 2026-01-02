@@ -58,9 +58,10 @@ class CustomizationManager {
      * Inicializa os controles de personalização
      */
     initializeControls() {
+        console.log('Initializing customization controls...');
         this.createCustomizationPanel();
         this.setupEventListeners();
-        this.updatePreview();
+        console.log('Customization controls initialized, preview enabled:', this.previewEnabled);
     }
 
     /**
@@ -299,10 +300,14 @@ class CustomizationManager {
      * Atualiza uma opção e aplica preview se habilitado
      */
     updateOption(key, value) {
+        console.log(`Updating option ${key} to:`, value);
         this.currentOptions[key] = value;
         
         if (this.previewEnabled) {
+            console.log('Preview enabled, calling updatePreview...');
             this.updatePreview();
+        } else {
+            console.log('Preview disabled, skipping update');
         }
     }
 
@@ -332,11 +337,14 @@ class CustomizationManager {
                 this.uiManager.showLoading(true);
             }
 
+            // Mapeia as opções para o formato do QRCode.js
+            const qrOptions = this.mapOptionsToQRCode(this.currentOptions);
+            
             // Aplica as opções ao QR Generator
-            this.qrGenerator.updateOptions(this.currentOptions);
+            this.qrGenerator.updateOptions(qrOptions);
             
             // Regenera o QR Code com as novas opções
-            await this.qrGenerator.regenerate(this.currentOptions);
+            await this.qrGenerator.regenerate(qrOptions);
             
             if (this.uiManager) {
                 this.uiManager.showLoading(false);
@@ -360,11 +368,31 @@ class CustomizationManager {
         try {
             const currentQR = this.qrGenerator.getCurrentQRCode();
             if (currentQR) {
-                await this.qrGenerator.regenerate(this.currentOptions);
+                // Mapeia as opções de personalização para o formato do QRCode.js
+                const qrOptions = this.mapOptionsToQRCode(this.currentOptions);
+                console.log('Updating preview with options:', qrOptions);
+                await this.qrGenerator.regenerate(qrOptions);
+            } else {
+                console.log('No current QR code to preview');
             }
         } catch (error) {
             console.warn('Erro no preview:', error.message);
+            // Não mostra erro para o usuário no preview, apenas no console
         }
+    }
+
+    /**
+     * Mapeia opções de personalização para formato do QRCode.js
+     */
+    mapOptionsToQRCode(options) {
+        return {
+            width: options.size,
+            height: options.size,
+            colorDark: options.colorDark,
+            colorLight: options.colorLight,
+            correctLevel: options.errorCorrectionLevel,
+            margin: options.margin
+        };
     }
 
     /**
