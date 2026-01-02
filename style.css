@@ -344,6 +344,33 @@ body {
   font-size: 16px;
 }
 
+/* Preview Container */
+.preview-container {
+  text-align: center;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.preview-qrcode {
+  display: inline-block;
+  border: 5px solid white;
+  background-color: white;
+  min-height: 200px;
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-qrcode .msg {
+  color: #1a1a1a;
+  text-align: center;
+  padding: 20px;
+  font-size: 14px;
+}
+
 /* Size Controls */
 .size-controls label {
   display: block;

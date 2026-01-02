@@ -61,7 +61,27 @@ class CustomizationManager {
         console.log('Initializing customization controls...');
         this.createCustomizationPanel();
         this.setupEventListeners();
+        this.loadCurrentQRCode(); // Carrega o QR Code atual se existir
         console.log('Customization controls initialized, preview enabled:', this.previewEnabled);
+    }
+
+    /**
+     * Carrega o QR Code atual na área de preview
+     */
+    async loadCurrentQRCode() {
+        try {
+            const currentQR = this.qrGenerator.getCurrentQRCode();
+            if (currentQR) {
+                console.log('Loading current QR code into preview...');
+                const qrOptions = this.mapOptionsToQRCode(this.currentOptions);
+                await this.generatePreviewQRCode(currentQR.content, qrOptions);
+            } else {
+                this.showPreviewMessage('Gere um QR Code primeiro para ver o preview');
+            }
+        } catch (error) {
+            console.warn('Erro ao carregar QR Code atual:', error.message);
+            this.showPreviewMessage('Erro ao carregar QR Code');
+        }
     }
 
     /**
@@ -72,6 +92,22 @@ class CustomizationManager {
         if (!panel) return;
 
         panel.innerHTML = `
+            <!-- Preview Area -->
+            <div class="customization-section">
+                <h4>Preview</h4>
+                <div id="customization-preview-container" class="preview-container">
+                    <div id="customization-qrcode" class="preview-qrcode">
+                        <h5 class="msg">Gere um QR Code primeiro para ver o preview</h5>
+                    </div>
+                </div>
+                <div class="preview-controls">
+                    <label>
+                        <input type="checkbox" id="preview-enabled" ${this.previewEnabled ? 'checked' : ''}>
+                        Preview em tempo real
+                    </label>
+                </div>
+            </div>
+
             <div class="customization-section">
                 <h4>Tamanho</h4>
                 <div class="size-controls">
@@ -141,16 +177,6 @@ class CustomizationManager {
                     <button id="apply-customization" class="btn-primary">Aplicar Personalização</button>
                     <button id="reset-customization" class="btn-secondary">Restaurar Padrão</button>
                     <button id="save-preset" class="btn-secondary">Salvar Preset</button>
-                </div>
-            </div>
-
-            <div class="customization-section">
-                <h4>Preview</h4>
-                <div class="preview-controls">
-                    <label>
-                        <input type="checkbox" id="preview-enabled" ${this.previewEnabled ? 'checked' : ''}>
-                        Preview em tempo real
-                    </label>
                 </div>
             </div>
         `;
@@ -343,8 +369,11 @@ class CustomizationManager {
             // Aplica as opções ao QR Generator
             this.qrGenerator.updateOptions(qrOptions);
             
-            // Regenera o QR Code com as novas opções
+            // Regenera o QR Code principal com as novas opções
             await this.qrGenerator.regenerate(qrOptions);
+            
+            // Atualiza também o preview na aba de personalização
+            await this.generatePreviewQRCode(currentQR.content, qrOptions);
             
             if (this.uiManager) {
                 this.uiManager.showLoading(false);
@@ -371,13 +400,63 @@ class CustomizationManager {
                 // Mapeia as opções de personalização para o formato do QRCode.js
                 const qrOptions = this.mapOptionsToQRCode(this.currentOptions);
                 console.log('Updating preview with options:', qrOptions);
-                await this.qrGenerator.regenerate(qrOptions);
+                
+                // Gera o QR Code na área de preview da personalização
+                await this.generatePreviewQRCode(currentQR.content, qrOptions);
             } else {
                 console.log('No current QR code to preview');
+                this.showPreviewMessage('Gere um QR Code primeiro para ver o preview');
             }
         } catch (error) {
             console.warn('Erro no preview:', error.message);
-            // Não mostra erro para o usuário no preview, apenas no console
+            this.showPreviewMessage('Erro ao gerar preview');
+        }
+    }
+
+    /**
+     * Gera QR Code na área de preview
+     */
+    async generatePreviewQRCode(content, options) {
+        const previewContainer = document.getElementById('customization-qrcode');
+        if (!previewContainer) return;
+
+        // Limpa o container
+        previewContainer.innerHTML = '';
+
+        // Cria uma nova instância do QRCode para o preview
+        return new Promise((resolve, reject) => {
+            try {
+                const qrCode = new QRCode(previewContainer, {
+                    text: content,
+                    width: options.width,
+                    height: options.height,
+                    colorDark: options.colorDark,
+                    colorLight: options.colorLight,
+                    correctLevel: options.correctLevel
+                });
+
+                // Aguarda a geração
+                setTimeout(() => {
+                    if (previewContainer.querySelector('canvas') || previewContainer.querySelector('img')) {
+                        resolve(qrCode);
+                    } else {
+                        reject(new Error('Failed to generate preview QR code'));
+                    }
+                }, 100);
+
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    /**
+     * Mostra mensagem na área de preview
+     */
+    showPreviewMessage(message) {
+        const previewContainer = document.getElementById('customization-qrcode');
+        if (previewContainer) {
+            previewContainer.innerHTML = `<h5 class="msg">${message}</h5>`;
         }
     }
 

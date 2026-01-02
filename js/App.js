@@ -230,7 +230,11 @@ class App {
      */
     handleTabChange(data) {
         console.log('Tab changed to:', data.tabName);
-        // Future implementation for tab-specific logic
+        
+        // Se mudou para a aba de personalização, carrega o QR Code atual
+        if (data.tabName === 'customize' && this.customizationManager) {
+            this.customizationManager.loadCurrentQRCode();
+        }
     }
 
     /**
