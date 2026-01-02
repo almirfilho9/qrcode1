@@ -136,29 +136,33 @@ class UIManager {
     }
 
     /**
-     * Show specific tab (placeholder for future implementation)
+     * Show specific tab
      */
     showTab(tabName) {
         // Hide all tab contents
         document.querySelectorAll('.tab-content').forEach(content => {
             content.classList.remove('active');
+            content.style.display = 'none';
         });
 
         // Remove active class from all buttons
         document.querySelectorAll('.tab-button').forEach(button => {
             button.classList.remove('active');
+            button.setAttribute('aria-selected', 'false');
         });
 
         // Show target tab content
         const targetContent = document.getElementById(`${tabName}-tab`);
         if (targetContent) {
             targetContent.classList.add('active');
+            targetContent.style.display = 'block';
         }
 
         // Activate target button
         const targetButton = document.querySelector(`[data-tab="${tabName}"]`);
         if (targetButton) {
             targetButton.classList.add('active');
+            targetButton.setAttribute('aria-selected', 'true');
         }
 
         this.activeTab = tabName;

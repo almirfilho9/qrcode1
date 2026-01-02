@@ -90,7 +90,6 @@ class DownloadManager {
      */
     async downloadAsSVG(customFilename = null) {
         try {
-            // Para SVG, precisamos regenerar o QR Code usando a opção SVG do QRCode.js
             const currentQR = this.qrGenerator.getCurrentQRCode();
             if (!currentQR) {
                 throw new Error('Nenhum QR Code encontrado para download');
@@ -98,48 +97,43 @@ class DownloadManager {
 
             const filename = customFilename || this.generateFilename('svg');
             
-            // Cria um container temporário para gerar SVG
-            const tempContainer = document.createElement('div');
-            tempContainer.style.display = 'none';
-            document.body.appendChild(tempContainer);
-
-            try {
-                // Gera QR Code como SVG
-                const qrSvg = new QRCode(tempContainer, {
-                    text: currentQR.content,
-                    width: currentQR.options.width,
-                    height: currentQR.options.height,
-                    colorDark: currentQR.options.colorDark,
-                    colorLight: currentQR.options.colorLight,
-                    correctLevel: currentQR.options.correctLevel,
-                    useSVG: true
-                });
-
-                // Aguarda a geração do SVG
-                await new Promise(resolve => setTimeout(resolve, 100));
-
-                const svgElement = tempContainer.querySelector('svg');
-                if (!svgElement) {
-                    throw new Error('Falha ao gerar SVG');
-                }
-
-                // Converte SVG para string
-                const svgString = new XMLSerializer().serializeToString(svgElement);
-                const blob = new Blob([svgString], { type: 'image/svg+xml' });
-                
-                // Faz o download
-                this.downloadBlob(blob, filename);
-                
-                this.showSuccessMessage(`QR Code baixado como ${filename}`);
-                
-            } finally {
-                // Remove o container temporário
-                document.body.removeChild(tempContainer);
+            // Converte o canvas atual para SVG usando uma abordagem simples
+            const canvas = this.qrGenerator.getCanvas();
+            if (!canvas) {
+                throw new Error('Canvas não encontrado para conversão SVG');
             }
+
+            // Cria SVG a partir do canvas
+            const svgString = this.createSVGFromCanvas(canvas, currentQR.options);
+            const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            
+            // Faz o download
+            this.downloadBlob(blob, filename);
+            
+            this.showSuccessMessage(`QR Code baixado como ${filename}`);
             
         } catch (error) {
             this.handleDownloadError(error, 'SVG');
         }
+    }
+
+    /**
+     * Cria SVG a partir do canvas
+     */
+    createSVGFromCanvas(canvas, options) {
+        const { width, height, colorDark, colorLight } = options;
+        
+        // Converte canvas para data URL
+        const dataURL = canvas.toDataURL('image/png');
+        
+        // Cria SVG com a imagem embutida
+        const svgContent = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+     width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+  <image x="0" y="0" width="${width}" height="${height}" xlink:href="${dataURL}"/>
+</svg>`;
+        
+        return svgContent;
     }
 
     /**
